@@ -142,8 +142,9 @@ sudo umount /mnt/arquivo
 **Make it persistent via `/etc/fstab`:**
 
 ```bash
-# Store credentials securely
-sudo nano /etc/samba/credentials_arquivo
+# Create credentials directory (do not use /etc/samba — Samba may not be installed)
+sudo mkdir -p /etc/cifs
+sudo nano /etc/cifs/credentials_arquivo
 ```
 
 ```
@@ -152,12 +153,13 @@ password=<pass>
 ```
 
 ```bash
-sudo chmod 600 /etc/samba/credentials_arquivo
+sudo chmod 600 /etc/cifs/credentials_arquivo
 
 # Add to /etc/fstab (replace <nas-ip> and <share>)
-echo "//<nas-ip>/<share>  /mnt/arquivo  cifs  credentials=/etc/samba/credentials_arquivo,uid=$(id -u),gid=$(id -g),vers=2.0,_netdev,nofail  0  0" | sudo tee -a /etc/fstab
+echo "//<nas-ip>/<share>  /mnt/arquivo  cifs  credentials=/etc/cifs/credentials_arquivo,uid=$(id -u),gid=$(id -g),vers=2.0,_netdev,nofail  0  0" | sudo tee -a /etc/fstab
 
-# Apply and verify
+# Reload systemd and apply
+sudo systemctl daemon-reload
 sudo mount -a
 ls /mnt/arquivo
 ```

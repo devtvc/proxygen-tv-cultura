@@ -106,21 +106,51 @@ LOG_LEVEL=INFO
 
 ### 3. Mount the media volume
 
-The worker container requires access to the MXF source files and the proxy output directory on the SAN/NAS.
+The worker container requires access to the MXF source files and the proxy output directory on the SAN/NAS. The share is mounted via SMB (CIFS).
 
 ```bash
+# Install SMB client
+sudo apt install -y cifs-utils
+
 # Create mount point
 sudo mkdir -p /mnt/arquivo
 
-# NFS example
-sudo mount -t nfs <nas-ip>:/arquivo /mnt/arquivo
-
-# Make persistent — add to /etc/fstab
-echo "<nas-ip>:/arquivo  /mnt/arquivo  nfs  defaults,_netdev  0  0" | sudo tee -a /etc/fstab
+# Test mount first (replace <nas-ip> and <share> with your values)
+sudo mount -t cifs //<nas-ip>/<share> /mnt/arquivo \
+  -o username=<user>,password=<pass>,uid=$(id -u),gid=$(id -g),vers=2.0
 
 # Verify expected directory structure
 ls /mnt/arquivo/{FINALIZADOS,INSERCOES,BRUTOS,EDITADOS,ACERVO,PROXY}
+
+# Unmount after test (cd out of the directory first)
+cd ~
+sudo umount /mnt/arquivo
 ```
+
+**Make it persistent via `/etc/fstab`:**
+
+```bash
+# Store credentials securely
+sudo nano /etc/samba/credentials_arquivo
+```
+
+```
+username=<user>
+password=<pass>
+```
+
+```bash
+sudo chmod 600 /etc/samba/credentials_arquivo
+
+# Add to /etc/fstab (replace <nas-ip> and <share>)
+echo "//<nas-ip>/<share>  /mnt/arquivo  cifs  credentials=/etc/samba/credentials_arquivo,uid=$(id -u),gid=$(id -g),vers=2.0,_netdev,nofail  0  0" | sudo tee -a /etc/fstab
+
+# Apply and verify
+sudo mount -a
+ls /mnt/arquivo
+```
+
+> **Note:** If `vers=2.0` fails with error 95, try `vers=2.1` or `vers=3.0`. Run `dmesg | tail -20` to see the exact rejection reason.
 
 ---
 

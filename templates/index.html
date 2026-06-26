@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ProxyGen TV Cultura</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            /* TV Cultura — identidade visual oficial */
+            --cultura-green:      #5BC800;
+            --cultura-green-mid:  #4FAF00;
+            --cultura-green-dark: #3E8C00;
+            --cultura-green-dim:  rgba(91,200,0,.14);
+            --cultura-blue:       #1E3C87;
+            --cultura-blue-light: #2E55B0;
+            --cultura-blue-dim:   rgba(30,60,135,.10);
+
+            /* Light UI base */
+            --bg-base:    #eef1f4;
+            --bg-card:    #ffffff;
+            --bg-row:     #ffffff;
+            --bg-row-alt: #f6f8fa;
+            --border:     #e1e6ec;
+            --border-accent: rgba(91,200,0,.45);
+
+            /* Status colors */
+            --yellow:     #B8860B;
+            --yellow-dim: rgba(184,134,11,.12);
+            --red:        #D62839;
+            --status-green: #2DA84C;
+
+            /* Text */
+            --text:       #1b2330;
+            --text-muted: #66728a;
+            --radius:     10px;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-base);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 0 0 60px;
+        }
+
+        /* ── Header TV Cultura ── */
+        .header {
+            background: #ffffff;
+            border-bottom: 3px solid var(--cultura-green);
+            padding: 0 36px;
+            display: flex;
+            align-items: center;
+            gap: 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            height: 68px;
+            box-shadow: 0 2px 12px rgba(0,0,0,.06);
+        }
+
+        /* Logo TV Cultura */
+        .logo-wrap {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            text-decoration: none;
+            flex-shrink: 0;
+        }
+        .logo-symbol {
+            width: 44px;
+            height: 44px;
+            flex-shrink: 0;
+        }
+        .logo-text {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.15;
+        }
+        .logo-text .tv-label {
+            font-size: .58rem;
+            font-weight: 700;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+        }
+        .logo-text .cultura-label {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--cultura-blue);
+            letter-spacing: .5px;
+        }
+        .logo-text .cultura-label span {
+            color: var(--cultura-green-dark);
+        }
+
+        .header-divider {
+            width: 1px;
+            height: 34px;
+            background: var(--border);
+            margin: 0 22px;
+        }
+
+        .header-title {
+            font-size: .88rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            letter-spacing: .2px;
+        }
+
+        .header-live {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .live-dot {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            background: var(--cultura-green);
+            box-shadow: 0 0 10px var(--cultura-green);
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50%       { opacity: .5; transform: scale(1.35); }
+        }
+        #last-update { font-size: .78rem; color: var(--text-muted); }
+
+        /* ── Layout ── */
+        .container { max-width: 1300px; margin: 0 auto; padding: 30px 24px; }
+
+        /* ── Stats ── */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 30px;
+        }
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 20px 24px;
+            position: relative;
+            overflow: hidden;
+            transition: transform .2s, box-shadow .2s;
+        }
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(69,176,53,.14);
+            border-color: var(--border-accent);
+        }
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+            background: var(--cultura-green);
+            border-radius: var(--radius) var(--radius) 0 0;
+        }
+        .stat-card:nth-child(2)::before { background: var(--cultura-blue-light); }
+        .stat-card:nth-child(3)::before { background: var(--status-green); }
+        .stat-card:nth-child(4)::before { background: var(--red); }
+        .stat-label {
+            font-size: .72rem; font-weight: 600; text-transform: uppercase;
+            letter-spacing: .8px; color: var(--text-muted); margin-bottom: 8px;
+        }
+        .stat-value { font-size: 2rem; font-weight: 700; color: var(--text); }
+
+        /* ── Section header ── */
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+        .section-header h2 { font-size: 1rem; font-weight: 600; color: var(--text); }
+        .section-badge {
+            font-size: .7rem; font-weight: 700; padding: 3px 8px;
+            border-radius: 20px; letter-spacing: .5px; text-transform: uppercase;
+        }
+        .badge-priority { background: var(--yellow-dim); color: var(--yellow); border: 1px solid rgba(245,197,24,.3); }
+        .badge-active   { background: var(--cultura-green-dim); color: var(--cultura-green-dark); border: 1px solid rgba(91,200,0,.4); }
+        .badge-history  { background: rgba(110,118,156,.1); color: var(--text-muted); border: 1px solid rgba(110,118,156,.25); }
+
+        /* ── Manual Queue Card ── */
+        .manual-card {
+            background: var(--bg-card);
+            border: 1px solid rgba(69,176,53,.25);
+            border-radius: var(--radius);
+            padding: 22px 24px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 30px rgba(69,176,53,.06);
+        }
+        .manual-card-title {
+            font-size: .8rem; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 1px; color: var(--cultura-green-dark); margin-bottom: 14px;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .manual-card-title::before { content: '⚡'; font-size: 1rem; }
+        .input-row { display: flex; gap: 10px; max-width: 520px; }
+        .input-row input {
+            flex: 1;
+            background: var(--bg-base);
+            border: 1px solid var(--border);
+            padding: 11px 16px;
+            border-radius: 8px;
+            color: var(--text);
+            font-size: .95rem;
+            font-family: 'Inter', monospace;
+            outline: none;
+            transition: border-color .2s, box-shadow .2s;
+        }
+        .input-row input:focus {
+            border-color: var(--cultura-green);
+            box-shadow: 0 0 0 3px rgba(69,176,53,.15);
+        }
+        .input-row input::placeholder { color: var(--text-muted); }
+        .btn-add {
+            background: var(--cultura-green);
+            color: #fff;
+            border: none;
+            padding: 11px 22px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: .9rem;
+            font-family: 'Inter', sans-serif;
+            transition: background .2s, transform .15s;
+            white-space: nowrap;
+        }
+        .btn-add:hover   { background: var(--cultura-green-mid); transform: translateY(-1px); }
+        .btn-add:active  { transform: translateY(0); }
+        .btn-add:disabled { background: #c4cad3; color: #ffffff; cursor: not-allowed; transform: none; }
+
+        /* ── Tables ── */
+        .table-wrap {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+        table { width: 100%; border-collapse: collapse; }
+        thead th {
+            background: var(--bg-row-alt);
+            padding: 13px 18px;
+            text-align: left;
+            font-size: .7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .8px;
+            color: var(--text-muted);
+            border-bottom: 1px solid var(--border);
+        }
+        tbody tr {
+            border-bottom: 1px solid var(--border);
+            transition: background .15s;
+        }
+        tbody tr:last-child { border-bottom: none; }
+        tbody tr:hover { background: rgba(69,176,53,.04); }
+        tbody td { padding: 13px 18px; font-size: .88rem; color: var(--text); }
+        .mono { font-family: 'SF Mono', 'Fira Code', monospace; font-size: .82rem; color: var(--cultura-green-dark); }
+        .text-muted { color: var(--text-muted); font-size: .82rem; }
+        .empty-row td { text-align: center; color: var(--text-muted); padding: 28px; font-size: .85rem; }
+
+        /* ── Status Badges ── */
+        .badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: .72rem;
+            font-weight: 700;
+            letter-spacing: .3px;
+        }
+        .badge-Pendente    { background: var(--yellow-dim); color: var(--yellow); border: 1px solid rgba(245,197,24,.3); }
+        .badge-Processando { background: var(--cultura-blue-dim); color: var(--cultura-blue-light); border: 1px solid rgba(30,60,135,.35); }
+        .badge-Aguardando  { background: var(--yellow-dim); color: var(--yellow); border: 1px solid rgba(245,197,24,.3); }
+        .badge-Concluído   { background: rgba(45,198,83,.12); color: var(--status-green); border: 1px solid rgba(45,198,83,.25); }
+        .badge-Concluido   { background: rgba(45,198,83,.12); color: var(--status-green); border: 1px solid rgba(45,198,83,.25); }
+        .badge-Erro        { background: rgba(230,57,70,.12); color: var(--red);    border: 1px solid rgba(230,57,70,.25); }
+        .badge-Cancelado   { background: rgba(110,118,156,.12); color: var(--text-muted); border: 1px solid rgba(110,118,156,.3); }
+        .badge-Iniciando   { background: var(--cultura-green-dim); color: var(--cultura-green-dark); border: 1px solid rgba(91,200,0,.3); }
+
+        /* ── Progress Bar ── */
+        .progress-wrap { display: flex; align-items: center; gap: 10px; }
+        .progress-bar-bg {
+            flex: 1; max-width: 90px;
+            height: 5px; background: var(--border);
+            border-radius: 10px; overflow: hidden;
+        }
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--cultura-green-dark), var(--cultura-green));
+            border-radius: 10px;
+            transition: width .4s ease;
+        }
+        .progress-label { font-size: .8rem; color: var(--text-muted); min-width: 34px; }
+
+        /* ── Buttons ── */
+        .btn-sm {
+            border: none; border-radius: 6px; padding: 5px 12px;
+            font-size: .78rem; font-weight: 600; cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            transition: background .2s, transform .15s;
+        }
+        .btn-cancel { background: rgba(230,57,70,.15); color: var(--red); border: 1px solid rgba(230,57,70,.3); }
+        .btn-cancel:hover { background: rgba(230,57,70,.28); transform: translateY(-1px); }
+        .btn-retry { background: var(--cultura-green-dim); color: var(--cultura-green-dark); border: 1px solid rgba(91,200,0,.4); }
+        .btn-retry:hover { background: rgba(91,200,0,.22); transform: translateY(-1px); }
+        .badge-legado { background: rgba(180,60,220,.10); color: #a020c0; border: 1px solid rgba(180,60,220,.25); }
+
+        /* ── Toast ── */
+        #toast {
+            position: fixed; bottom: 28px; right: 28px;
+            padding: 12px 20px; border-radius: 8px;
+            font-size: .88rem; font-weight: 600;
+            display: none; z-index: 999;
+            box-shadow: 0 8px 30px rgba(0,0,0,.4);
+            animation: slideIn .3s ease;
+        }
+        @keyframes slideIn { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
+        #toast.success { background: rgba(45,198,83,.2); color: var(--green); border: 1px solid rgba(45,198,83,.35); }
+        #toast.error   { background: rgba(230,57,70,.2); color: var(--red);   border: 1px solid rgba(230,57,70,.35); }
+
+        /* ── Footer ── */
+        .footer {
+            text-align: center;
+            padding: 16px;
+            font-size: .72rem;
+            color: var(--text-muted);
+            border-top: 1px solid var(--border);
+            margin-top: 20px;
+        }
+        .footer span { color: var(--cultura-blue-light); }
+
+        @media (max-width: 900px) {
+            .stats-grid { grid-template-columns: repeat(2,1fr); }
+        }
+        @media (max-width: 560px) {
+            .stats-grid { grid-template-columns: 1fr 1fr; }
+            .header { padding: 0 18px; }
+            .container { padding: 20px 14px; }
+            .header-divider, .header-title { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ── Header TV Cultura ── -->
+<div class="header">
+    <div class="logo-wrap">
+        <!-- Símbolo TV Cultura oficial (path vetorial Wikimedia Commons) -->
+        <svg class="logo-symbol" viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
+            <rect width="500" height="500" rx="58" fill="#5BC800"/>
+            <path fill="#ffffff" transform="matrix(1.16151,0,0,1.16151,-1001.34,-276.12)"
+                d="m 1028.2988,323.73047 0,99.96484 97.6953,0 0,-99.96484 -97.6953,0 z m 103.8184,109.80664 c -0.9803,-0.007 -1.953,0.009 -2.9024,0.0606 -28.4814,1.57741 -49.6581,21.07891 -47.7714,56.35937 l 0,92.31055 48.9414,0 0,-99.50196 101.9765,-0.38867 0,-48.77929 -97.2968,0 c -0.9792,-0.0281 -1.9671,-0.0543 -2.9473,-0.0606 z m -109.5391,0.0391 c -0.9649,-0.0125 -1.9386,-0.005 -2.9179,0.0215 l -97.29887,0 0,48.77929 101.97847,0.38867 0,99.50196 48.9414,0 0,-92.31055 c 1.9496,-36.45653 -20.7905,-55.99405 -50.7031,-56.38086 z"/>
+        </svg>
+        <div class="logo-text">
+            <span class="tv-label">TV</span>
+            <span class="cultura-label">CULTURA</span>
+        </div>
+    </div>
+
+    <div class="header-divider"></div>
+    <span class="header-title">ProxyGen TV Cultura</span>
+
+    <div class="header-live">
+        <div class="live-dot"></div>
+        <span id="last-update">Atualizando...</span>
+    </div>
+</div>
+
+<div class="container">
+
+    <!-- Stats -->
+    <div class="stats-grid" id="stats">
+        <div class="stat-card"><div class="stat-label">Workers</div><div class="stat-value">—</div></div>
+        <div class="stat-card"><div class="stat-label">Ativos</div><div class="stat-value">—</div></div>
+        <div class="stat-card"><div class="stat-label">Concluídos</div><div class="stat-value">—</div></div>
+        <div class="stat-card"><div class="stat-label">Erros</div><div class="stat-value">—</div></div>
+    </div>
+
+    <!-- Manual Queue Card -->
+    <div class="manual-card">
+        <div class="manual-card-title">Fila de Reprocessamento Manual</div>
+        <div class="input-row">
+            <input type="text" id="manual-media-id" placeholder="Digite o Media ID (ex: 12345)" autocomplete="off" />
+            <button id="btn-add-manual" class="btn-add" onclick="adicionarFilaManual()">Adicionar à Fila</button>
+        </div>
+    </div>
+
+    <!-- Fila Manual — Aguardando -->
+    <div class="section-header">
+        <h2>⚡ Fila de Reprocessamento</h2>
+        <span class="section-badge badge-priority" id="manual-count">0 na fila</span>
+    </div>
+    <div class="table-wrap" style="margin-bottom:24px;">
+        <table>
+            <thead>
+                <tr>
+                    <th>Posição</th>
+                    <th>Media ID</th>
+                    <th>Título</th>
+                    <th>Tipo</th>
+                    <th>Duração</th>
+                    <th>Adicionado em</th>
+                    <th>Mensagem</th>
+                </tr>
+            </thead>
+            <tbody id="fila-manual-body">
+                <tr class="empty-row"><td colspan="7">Nenhum proxy aguardando na fila</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Fila Manual — Em Reprocessamento -->
+    <div class="section-header">
+        <h2>🔄 Em Reprocessamento</h2>
+        <span class="section-badge badge-active" id="reprocessando-count">0 ativos</span>
+    </div>
+    <div class="table-wrap" style="margin-bottom:36px;">
+        <table>
+            <thead>
+                <tr>
+                    <th>Media ID</th>
+                    <th>Título</th>
+                    <th>Tipo</th>
+                    <th>Duração</th>
+                    <th>Status</th>
+                    <th>Adicionado em</th>
+                    <th>Mensagem</th>
+                </tr>
+            </thead>
+            <tbody id="reprocessando-body">
+                <tr class="empty-row"><td colspan="7">Nenhum reprocessamento ativo</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Jobs Ativos -->
+    <div class="section-header">
+        <h2>Jobs Ativos</h2>
+        <span class="section-badge badge-active" id="active-count">0 ativos</span>
+    </div>
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Media ID</th>
+                    <th>Título</th>
+                    <th>Tipo</th>
+                    <th>Duração</th>
+                    <th>Status</th>
+                    <th>Progresso</th>
+                    <th>Início</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody id="active-jobs">
+                <tr class="empty-row"><td colspan="8">Nenhum job ativo no momento</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Histórico -->
+    <div class="section-header">
+        <h2>Histórico Recente</h2>
+        <span class="section-badge badge-history" id="history-count">0 registros</span>
+    </div>
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Media ID</th>
+                    <th>Título</th>
+                    <th>Tipo</th>
+                    <th>Duração</th>
+                    <th>Status</th>
+                    <th>Finalizado em</th>
+                    <th>Mensagem</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody id="history-jobs">
+                <tr class="empty-row"><td colspan="8">Sem histórico disponível</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+<div class="footer">
+    <span>ProxyGen TV Cultura</span> — Fundação Padre Anchieta
+</div>
+
+<div id="toast"></div>
+
+<script src="/static/js/main.js?v=3.0.0"></script>
+</body>
+</html>

@@ -1,0 +1,4 @@
+postgres/init.sql
+Função: Script de inicialização do banco de dados PostgreSQL (executado na primeira inicialização do container)
+Depende de: Nenham (apenas uma mensagem)
+Status: OK

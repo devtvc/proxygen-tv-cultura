@@ -1,0 +1,91 @@
+services:
+
+  db:
+    image: postgres:13
+    container_name: stratus-db
+
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-broadcast}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-pass123}
+      POSTGRES_DB: ${POSTGRES_DB:-broadcast_db}
+
+    ports:
+      - "5432:5432"
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER:-broadcast} -d $${POSTGRES_DB:-broadcast_db}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build:
+      context: .
+      dockerfile: api/Dockerfile
+
+    container_name: stratus-api
+
+    ports:
+      - "8000:8000"
+
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-broadcast}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-pass123}
+      POSTGRES_HOST: db
+      POSTGRES_DB: ${POSTGRES_DB:-broadcast_db}
+      POSTGRES_PORT: 5432
+      MAX_WORKERS: ${MAX_WORKERS:-1}
+      WSDL_URL: ${WSDL_URL:-http://172.20.15.190/mam080622/trf_services.asmx?WSDL}
+      SERVIDOR: ${SERVIDOR:-A}
+
+    depends_on:
+      db:
+        condition: service_healthy
+
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/health')\""]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  worker:
+    build:
+      context: .
+      dockerfile: worker/Dockerfile
+
+    container_name: stratus-worker
+
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-broadcast}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-pass123}
+      POSTGRES_HOST: db
+      POSTGRES_DB: ${POSTGRES_DB:-broadcast_db}
+      POSTGRES_PORT: 5432
+      SERVIDOR: ${SERVIDOR:-A}
+      MAX_WORKERS: ${MAX_WORKERS:-1}
+      WSDL_URL: ${WSDL_URL:-http://172.20.15.190/mam080622/trf_services.asmx?WSDL}
+      PROXY_DIR: ${PROXY_DIR:-/Volumes/arquivo$$/PROXY}
+      INPUT_DIR_P: ${INPUT_DIR_P:-/Volumes/arquivo$$/FINALIZADOS}
+      INPUT_DIR_I: ${INPUT_DIR_I:-/Volumes/arquivo$$/INSERCOES}
+      INPUT_DIR_B: ${INPUT_DIR_B:-/Volumes/arquivo$$/BRUTOS}
+      INPUT_DIR_E: ${INPUT_DIR_E:-/Volumes/arquivo$$/EDITADOS}
+      INPUT_DIR_A: ${INPUT_DIR_A:-/Volumes/arquivo$$/ACERVO}
+
+    volumes:
+      - ${HOST_VOLUME_PATH:-/Volumes/arquivo$$}:${CONTAINER_VOLUME_PATH:-/Volumes/arquivo$$}
+
+    depends_on:
+      db:
+        condition: service_healthy
+      api:
+        condition: service_healthy
+
+    restart: unless-stopped
+
+volumes:
+  postgres_data:

@@ -39,3 +39,4 @@ postgres/data/
 # Claude Code internal
 .claude/settings.local.json
 .claude/launch.json
+.claude/settings.json

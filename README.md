@@ -37,12 +37,24 @@ Startup order enforced via healthchecks: `db` → `api` → `worker`
 ### Prerequisites
 
 ```bash
-# Ubuntu/Debian
-sudo apt update && sudo apt install -y docker.io docker-compose-plugin git
+# Install Docker and Git
+sudo apt update && sudo apt install -y docker.io git
 
 # Add your user to the docker group
 sudo usermod -aG docker $USER
 newgrp docker
+```
+
+`docker-compose-plugin` is not available in the default Ubuntu repos on Ubuntu 24+/26. Install the Compose V2 plugin manually:
+
+```bash
+DOCKER_CONFIG=${DOCKER_CONFIG:-$HOME/.docker}
+mkdir -p $DOCKER_CONFIG/cli-plugins
+
+curl -SL https://github.com/docker/compose/releases/download/v2.27.0/docker-compose-linux-x86_64 \
+  -o $DOCKER_CONFIG/cli-plugins/docker-compose
+
+chmod +x $DOCKER_CONFIG/cli-plugins/docker-compose
 
 # Verify
 docker --version
